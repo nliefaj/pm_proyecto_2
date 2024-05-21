@@ -233,6 +233,7 @@ ISR(PCINT1_vect){
 					adr=0;
 					break;
 				sei();
+			posicion=0;
 			}
 		}else if(modo==2){
 			cli();
@@ -291,6 +292,7 @@ ISR(PCINT1_vect){
 					break;
 			}
 			sei();
+			posicion=0;
 		}
 		//terminan if de modos	
 	}else{

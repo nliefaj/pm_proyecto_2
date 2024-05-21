@@ -55,7 +55,9 @@ void initPWM1(uint8_t invertido, uint16_t preescaler){
 void updateDC1(uint8_t prc_duty, uint8_t prc_duty2){
 	y=((0.05*prc_duty)+4.66);
 	y2=((0.05*prc_duty2)+4.66);
+	//OCR1A-->pot4 eyelid derecha
 	OCR1A=y;
+	//OCR1B-->pot3 eyelid izquierda
 	OCR1B=y2;
 }
 

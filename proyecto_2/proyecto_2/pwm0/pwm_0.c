@@ -52,6 +52,8 @@ void updateDC0(uint8_t duty_cycle,uint8_t duty_cycle2){
 	uint8_t a2;
 	a=((0.05*duty_cycle)+8);
 	a2=((0.05*duty_cycle2)+8);
+	//pot2--> eyeballs
 	OCR0A=a;
+	//pot1--> boca
 	OCR0B=a2;
 }
