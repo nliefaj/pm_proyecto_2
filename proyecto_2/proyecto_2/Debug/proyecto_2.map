@@ -573,19 +573,19 @@ END GROUP
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000      0xbbb
+.debug_info     0x00000000      0xb9e
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000      0x5f4 D:/microchip_studio/7.0/Packs/atmel/ATmega_DFP/1.7.374/gcc/dev/atmega328p/avr5/crtatmega328p.o
- .debug_info    0x000005f4      0x3b7 main.o
- .debug_info    0x000009ab      0x102 pwm0/pwm_0.o
- .debug_info    0x00000aad      0x10e pwm1/pwm_1.o
+ .debug_info    0x000005f4      0x39a main.o
+ .debug_info    0x0000098e      0x102 pwm0/pwm_0.o
+ .debug_info    0x00000a90      0x10e pwm1/pwm_1.o
 
-.debug_abbrev   0x00000000      0x868
+.debug_abbrev   0x00000000      0x85d
  *(.debug_abbrev)
  .debug_abbrev  0x00000000      0x5a2 D:/microchip_studio/7.0/Packs/atmel/ATmega_DFP/1.7.374/gcc/dev/atmega328p/avr5/crtatmega328p.o
- .debug_abbrev  0x000005a2      0x183 main.o
- .debug_abbrev  0x00000725       0xa7 pwm0/pwm_0.o
- .debug_abbrev  0x000007cc       0x9c pwm1/pwm_1.o
+ .debug_abbrev  0x000005a2      0x178 main.o
+ .debug_abbrev  0x0000071a       0xa7 pwm0/pwm_0.o
+ .debug_abbrev  0x000007c1       0x9c pwm1/pwm_1.o
 
 .debug_line     0x00000000      0x79f
  *(.debug_line .debug_line.* .debug_line_end)
@@ -610,11 +610,11 @@ END GROUP
  .debug_str     0x00000500       0x23 pwm1/pwm_1.o
                                 0x1c2 (size before relaxing)
 
-.debug_loc      0x00000000      0x322
+.debug_loc      0x00000000      0x30a
  *(.debug_loc)
- .debug_loc     0x00000000      0x182 main.o
- .debug_loc     0x00000182       0xdf pwm0/pwm_0.o
- .debug_loc     0x00000261       0xc1 pwm1/pwm_1.o
+ .debug_loc     0x00000000      0x16a main.o
+ .debug_loc     0x0000016a       0xdf pwm0/pwm_0.o
+ .debug_loc     0x00000249       0xc1 pwm1/pwm_1.o
 
 .debug_macinfo
  *(.debug_macinfo)

@@ -21,7 +21,7 @@ uint8_t valor_pot1=0;
 uint8_t valor_pot2=0;
 uint8_t valor_pot3=0;
 uint8_t valor_pot4=0;
-
+uint8_t* adr=0;
 uint8_t valor_pot1_esc=0;
 uint8_t valor_pot2_esc=0;
 uint8_t valor_pot3_esc=0;
@@ -105,7 +105,7 @@ void writetxtUART(char* texto){
 
 int main(void){	
 	CLKPR=(1<<CLKPCE);
-	CLKPR|=(1<<CLKPS0);
+	CLKPR=(1<<CLKPS0);
 	cli();
 	initUART9600();
 	initPWM0(0,1024);
@@ -113,6 +113,7 @@ int main(void){
 	//initPWM2(0,1024);
 	init_adc();
 	setup();
+	sei();
 	EECR=0;
     /* Replace with your application code */
     while (1) 
@@ -130,69 +131,13 @@ int main(void){
 			//se guardan los valores de los pots a la eeprom (escribir)
 			PORTD|=(1<<PORTD4);
 			PORTD&=~(1<<PORTD3);
-			char* txt=(char*)posicion;
-			writetxtUART(txt);
-			/*
-			switch(posicion){
-				case 1:
-				eeprom_write_byte((uint8_t*)0,valor_pot1);
-				eeprom_write_byte((uint8_t*)1,valor_pot2);
-				eeprom_write_byte((uint8_t*)2,valor_pot3);
-				eeprom_write_byte((uint8_t*)3,valor_pot4);
-				break;
-				case 2:
-				eeprom_write_byte((uint8_t*)4,valor_pot1);
-				eeprom_write_byte((uint8_t*)5,valor_pot2);
-				eeprom_write_byte((uint8_t*)6,valor_pot3);
-				eeprom_write_byte((uint8_t*)7,valor_pot4);
-				break;
-				case 3:
-				eeprom_write_byte((uint8_t*)8,valor_pot1);
-				eeprom_write_byte((uint8_t*)9,valor_pot2);
-				eeprom_write_byte((uint8_t*)10,valor_pot3);
-				eeprom_write_byte((uint8_t*)11,valor_pot4);
-				break;
-				case 4:
-				eeprom_write_byte((uint8_t*)12,valor_pot1);
-				eeprom_write_byte((uint8_t*)13,valor_pot2);
-				eeprom_write_byte((uint8_t*)14,valor_pot3);
-				eeprom_write_byte((uint8_t*)15,valor_pot4);
-				break;
-			}*/
 		}else if(modo==2){
 			//modo leer eeprom
 			PORTD|=(1<<PORTD3);
 			PORTD&=~(1<<PORTD4);
-			/*
-			switch(posicion){
-				case 1:
-					valor_pot1_esc=eeprom_read_byte((const uint8_t*)0);
-					valor_pot2_esc=eeprom_read_byte((const uint8_t*)1);
-					valor_pot3_esc=eeprom_read_byte((const uint8_t*)2);
-					valor_pot4_esc=eeprom_read_byte((const uint8_t*)3);
-					break;
-				case 2:
-					valor_pot1_esc=eeprom_read_byte((const uint8_t*)4);
-					valor_pot2_esc=eeprom_read_byte((const uint8_t*)5);
-					valor_pot3_esc=eeprom_read_byte((const uint8_t*)6);
-					valor_pot4_esc=eeprom_read_byte((const uint8_t*)7);
-					break;
-				case 3:
-					valor_pot1_esc=eeprom_read_byte((const uint8_t*)8);
-					valor_pot2_esc=eeprom_read_byte((const uint8_t*)9);
-					valor_pot3_esc=eeprom_read_byte((const uint8_t*)10);
-					valor_pot4_esc=eeprom_read_byte((const uint8_t*)11);
-					break;
-				case 4:
-					valor_pot1_esc=eeprom_read_byte((const uint8_t*)12);
-					valor_pot2_esc=eeprom_read_byte((const uint8_t*)13);
-					valor_pot3_esc=eeprom_read_byte((const uint8_t*)14);
-					valor_pot4_esc=eeprom_read_byte((const uint8_t*)15);
-				break;
-			}	
 			updateDC1(valor_pot1_esc,valor_pot2_esc);
 			updateDC0(valor_pot3_esc,valor_pot4_esc);
-			_delay_ms(10);*/
+			_delay_ms(10);
 		}else if (modo==3){
 			//modo=2, aquí se conecta con adafruit
 			PORTD|=(1<<PORTD3)|(1<<PORTD4);
@@ -234,7 +179,120 @@ ISR(PCINT1_vect){
 				pulsador++;
 			}
 		}
-		
+		if (modo==1){
+			cli();
+			switch(posicion){
+				case 1:
+					adr=0;
+					eeprom_write_byte(adr,valor_pot1);
+					adr++;
+					eeprom_write_byte(adr,valor_pot2);
+					adr++;
+					eeprom_write_byte(adr,valor_pot3);
+					adr++;
+					eeprom_write_byte(adr,valor_pot4);
+					adr=0;
+					break;
+				case 2:
+					for (int i=0;i<5;i++){
+						adr++;
+					}
+					eeprom_write_byte(adr,valor_pot1);
+					adr++;
+					eeprom_write_byte(adr,valor_pot2);
+					adr++;
+					eeprom_write_byte(adr,valor_pot3);
+					adr++;
+					eeprom_write_byte(adr,valor_pot4);
+					adr=0;
+					break;
+				case 3:
+					for (int i=0;i<9;i++){
+						adr++;
+					}
+					eeprom_write_byte(adr,valor_pot1);
+					adr++;
+					eeprom_write_byte(adr,valor_pot2);
+					adr++;
+					eeprom_write_byte(adr,valor_pot3);
+					adr++;
+					eeprom_write_byte(adr,valor_pot4);
+					adr=0;
+					break;
+				case 4:
+					for (int i=0;i<13;i++){
+						adr++;
+					}
+					eeprom_write_byte(adr,valor_pot1);
+					adr++;
+					eeprom_write_byte(adr,valor_pot2);
+					adr++;
+					eeprom_write_byte(adr,valor_pot3);
+					adr++;
+					eeprom_write_byte(adr,valor_pot4);
+					adr=0;
+					break;
+				sei();
+			}
+		}else if(modo==2){
+			cli();
+			switch(posicion){
+				case 1:
+					adr=0;
+					valor_pot1_esc=eeprom_read_byte(adr);
+					adr++;
+					valor_pot2_esc=eeprom_read_byte(adr);
+					adr++;
+					valor_pot3_esc=eeprom_read_byte(adr);
+					adr++;
+					valor_pot4_esc=eeprom_read_byte(adr);
+					adr=0;
+					break;
+				case 2:
+					for (int i=0;i<5;i++){
+						adr++;
+					}
+					valor_pot1_esc=eeprom_read_byte(adr);
+					adr++;
+					valor_pot2_esc=eeprom_read_byte(adr);
+					adr++;
+					valor_pot3_esc=eeprom_read_byte(adr);
+					adr++;
+					valor_pot4_esc=eeprom_read_byte(adr);
+					adr=0;
+					adr=0;
+					break;
+				case 3:
+					for (int i=0;i<9;i++){
+						adr++;
+					}
+					valor_pot1_esc=eeprom_read_byte(adr);
+					adr++;
+					valor_pot2_esc=eeprom_read_byte(adr);
+					adr++;
+					valor_pot3_esc=eeprom_read_byte(adr);
+					adr++;
+					valor_pot4_esc=eeprom_read_byte(adr);
+					adr=0;
+					adr=0;
+					break;
+				case 4:
+					for (int i=0;i<13;i++){
+						adr++;
+					}
+					valor_pot1_esc=eeprom_read_byte(adr);
+					adr++;
+					valor_pot2_esc=eeprom_read_byte(adr);
+					adr++;
+					valor_pot3_esc=eeprom_read_byte(adr);
+					adr++;
+					valor_pot4_esc=eeprom_read_byte(adr);
+					adr=0;
+					break;
+			}
+			sei();
+		}
+		//terminan if de modos	
 	}else{
 	pulsador=0;}
 }

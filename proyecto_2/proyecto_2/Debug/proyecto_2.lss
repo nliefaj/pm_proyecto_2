@@ -15,19 +15,19 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY
   5 .debug_aranges 000000a8  00000000  00000000  000009a8  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_info   00000bbb  00000000  00000000  00000a50  2**0
+  6 .debug_info   00000b9e  00000000  00000000  00000a50  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_abbrev 00000868  00000000  00000000  0000160b  2**0
+  7 .debug_abbrev 0000085d  00000000  00000000  000015ee  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   0000079f  00000000  00000000  00001e73  2**0
+  8 .debug_line   0000079f  00000000  00000000  00001e4b  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_frame  00000154  00000000  00000000  00002614  2**2
+  9 .debug_frame  00000154  00000000  00000000  000025ec  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    00000523  00000000  00000000  00002768  2**0
+ 10 .debug_str    00000523  00000000  00000000  00002740  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    00000322  00000000  00000000  00002c8b  2**0
+ 11 .debug_loc    0000030a  00000000  00000000  00002c63  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 00000078  00000000  00000000  00002fad  2**0
+ 12 .debug_ranges 00000078  00000000  00000000  00002f6d  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -271,29 +271,30 @@ int main(void){
  150:	f0 e0       	ldi	r31, 0x00	; 0
  152:	80 e8       	ldi	r24, 0x80	; 128
  154:	80 83       	st	Z, r24
-	CLKPR|=(1<<CLKPS0);
- 156:	80 81       	ld	r24, Z
- 158:	81 60       	ori	r24, 0x01	; 1
- 15a:	80 83       	st	Z, r24
+	CLKPR=(1<<CLKPS0);
+ 156:	81 e0       	ldi	r24, 0x01	; 1
+ 158:	80 83       	st	Z, r24
 	cli();
- 15c:	f8 94       	cli
+ 15a:	f8 94       	cli
 	initUART9600();
- 15e:	0e 94 77 00 	call	0xee	; 0xee <initUART9600>
+ 15c:	0e 94 77 00 	call	0xee	; 0xee <initUART9600>
 	initPWM0(0,1024);
- 162:	60 e0       	ldi	r22, 0x00	; 0
- 164:	74 e0       	ldi	r23, 0x04	; 4
- 166:	80 e0       	ldi	r24, 0x00	; 0
- 168:	0e 94 b4 01 	call	0x368	; 0x368 <initPWM0>
+ 160:	60 e0       	ldi	r22, 0x00	; 0
+ 162:	74 e0       	ldi	r23, 0x04	; 4
+ 164:	80 e0       	ldi	r24, 0x00	; 0
+ 166:	0e 94 b4 01 	call	0x368	; 0x368 <initPWM0>
 	initPWM1(0,1024);
- 16c:	60 e0       	ldi	r22, 0x00	; 0
- 16e:	74 e0       	ldi	r23, 0x04	; 4
- 170:	80 e0       	ldi	r24, 0x00	; 0
- 172:	0e 94 27 02 	call	0x44e	; 0x44e <initPWM1>
+ 16a:	60 e0       	ldi	r22, 0x00	; 0
+ 16c:	74 e0       	ldi	r23, 0x04	; 4
+ 16e:	80 e0       	ldi	r24, 0x00	; 0
+ 170:	0e 94 27 02 	call	0x44e	; 0x44e <initPWM1>
 	//initPWM2(0,1024);
 	init_adc();
- 176:	0e 94 61 00 	call	0xc2	; 0xc2 <init_adc>
+ 174:	0e 94 61 00 	call	0xc2	; 0xc2 <init_adc>
 	setup();
- 17a:	0e 94 48 00 	call	0x90	; 0x90 <setup>
+ 178:	0e 94 48 00 	call	0x90	; 0x90 <setup>
+	sei();
+ 17c:	78 94       	sei
 	EECR=0;
  17e:	1f ba       	out	0x1f, r1	; 31
     /* Replace with your application code */
@@ -353,9 +354,9 @@ int main(void){
  1ce:	8b b1       	in	r24, 0x0b	; 11
  1d0:	87 7f       	andi	r24, 0xF7	; 247
  1d2:	8b b9       	out	0x0b, r24	; 11
-			char* txt=(char*)posicion;
+			//char* txt=(char*)posicion;
+			writetxtUART((char*)posicion);
  1d4:	80 91 01 01 	lds	r24, 0x0101	; 0x800101 <posicion>
-			writetxtUART(txt);
  1d8:	90 e0       	ldi	r25, 0x00	; 0
  1da:	0e 94 96 00 	call	0x12c	; 0x12c <writetxtUART>
  1de:	d0 cf       	rjmp	.-96     	; 0x180 <main+0x32>
