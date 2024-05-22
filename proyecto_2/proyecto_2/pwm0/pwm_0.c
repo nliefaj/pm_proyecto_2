@@ -24,6 +24,7 @@ void initPWM0(uint8_t invertido, uint16_t preescaler){
 	}
 	
 	TCCR0A |=(1<<WGM00)|(1<<WGM01);
+	//TCCR0B|=(1<<WGM02);
 	
 	switch (preescaler){
 		case 0:
@@ -50,10 +51,10 @@ void initPWM0(uint8_t invertido, uint16_t preescaler){
 void updateDC0(uint8_t duty_cycle,uint8_t duty_cycle2){
 	uint8_t a;
 	uint8_t a2;
-	a=((0.05*duty_cycle)+8);
-	a2=((0.05*duty_cycle2)+8);
-	//pot2--> eyeballs
+	a=((0.035*duty_cycle)+4.67);
+	a2=((0.027*duty_cycle2)+4.67);
+	//pot2--> eyeballs-->135°
 	OCR0A=a;
-	//pot1--> boca
+	//pot1--> boca-->90°
 	OCR0B=a2;
 }

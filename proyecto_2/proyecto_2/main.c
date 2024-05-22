@@ -6,7 +6,10 @@
  */ 
 #define F_CPU 16000000
 #include <avr/io.h>
+#include <stdio.h>//preguntar si se puede usar esta
 #include <avr/interrupt.h>
+#include <string.h>//preguntar si se puede usar esta
+#include <stdlib.h>//preguntar si se puede usar esta
 #include <util/delay.h>
 #include <avr/eeprom.h>
 #include "pwm1/pwm_1.h"
@@ -26,6 +29,10 @@ uint8_t valor_pot1_esc=0;
 uint8_t valor_pot2_esc=0;
 uint8_t valor_pot3_esc=0;
 uint8_t valor_pot4_esc=0;
+uint8_t pot1_adafruit=0;
+uint8_t pot2_adafruit=0;
+uint8_t pot3_adafruit=0;
+uint8_t pot4_adafruit=0;
 
 //int servos[4];
 //int servos_mem[4];
@@ -101,6 +108,11 @@ void writetxtUART(char* texto){
 	}
 }
 
+uint8_t uart_receive(void){
+	while(!(UCSR0A&(1<<RXC0)));
+	return UDR0;
+}
+
 //MAIN LOOP
 
 int main(void){	
@@ -126,6 +138,15 @@ int main(void){
 			PORTD&=~(1<<PORTD4);
 			updateDC1(valor_pot1,valor_pot2);
 			updateDC0(valor_pot3,valor_pot4);
+			char mensaje[16];
+			snprintf(mensaje,sizeof(mensaje),"0 POT1:%d\n",valor_pot4);//potenciometro 1 en adafruit es el potenciometro 4 en codigo c
+			writetxtUART(mensaje);
+			snprintf(mensaje,sizeof(mensaje),"0 POT2:%d\n",valor_pot3);//potenciometro 2 en adafruit es el potenciometro 3 en codigo c
+			writetxtUART(mensaje);
+			snprintf(mensaje,sizeof(mensaje),"0 POT3:%d\n",valor_pot2);//potenciometro 3 en adafruit es el potenciometro 2 en codigo c
+			writetxtUART(mensaje);
+			snprintf(mensaje,sizeof(mensaje),"0 POT4:%d\n",valor_pot1);//potenciometro 4 en adafruit es el potenciometro 1 en codigo c
+			writetxtUART(mensaje);
 			_delay_ms(10);
 		}else if (modo==1){
 			//se guardan los valores de los pots a la eeprom (escribir)
@@ -135,12 +156,30 @@ int main(void){
 			//modo leer eeprom
 			PORTD|=(1<<PORTD3);
 			PORTD&=~(1<<PORTD4);
-			updateDC1(valor_pot1_esc,valor_pot2_esc);
-			updateDC0(valor_pot3_esc,valor_pot4_esc);
 			_delay_ms(10);
 		}else if (modo==3){
 			//modo=2, aquí se conecta con adafruit
 			PORTD|=(1<<PORTD3)|(1<<PORTD4);
+			writetxtUART("3");
+			if (UCSR0A&(1<<RXC0)){
+				char mensaje_recibido[16];
+				int i=0;
+				while((mensaje_recibido[i++]=uart_receive())!='\n'){
+					if (i>=15) break;
+				}
+				mensaje_recibido[i]='\0';
+				if(strncmp(mensaje_recibido,"POT1:",5)){
+					pot1_adafruit=atoi(mensaje_recibido+5);
+				}else if(strncmp(mensaje_recibido,"POT2:",5)){
+					pot2_adafruit=atoi(mensaje_recibido+5);
+				}else if(strncmp(mensaje_recibido,"POT3:",5)){
+					pot3_adafruit=atoi(mensaje_recibido+5);
+				}else if(strncmp(mensaje_recibido,"POT4:",5)){
+					pot4_adafruit=atoi(mensaje_recibido+5);
+				}	
+			}
+			updateDC1(pot1_adafruit,pot2_adafruit);
+			updateDC0(pot3_adafruit,pot4_adafruit);
 		}
 		
     }
@@ -192,7 +231,7 @@ ISR(PCINT1_vect){
 					adr++;
 					eeprom_write_byte(adr,valor_pot4);
 					adr=0;
-					writetxtUART("Se guardo la posicion 1\n");
+					//writetxtUART("Se guardo la posicion 1\n");
 					break;
 				case 2:
 					for (int i=0;i<5;i++){
@@ -206,7 +245,7 @@ ISR(PCINT1_vect){
 					adr++;
 					eeprom_write_byte(adr,valor_pot4);
 					adr=0;
-					writetxtUART("Se guardo la posicion 2\n");
+					//writetxtUART("Se guardo la posicion 2\n");
 					break;
 				case 3:
 					for (int i=0;i<9;i++){
@@ -220,7 +259,7 @@ ISR(PCINT1_vect){
 					adr++;
 					eeprom_write_byte(adr,valor_pot4);
 					adr=0;
-					writetxtUART("Se guardo la posicion 3\n");
+					//writetxtUART("Se guardo la posicion 3\n");
 					break;
 				case 4:
 					for (int i=0;i<13;i++){
@@ -234,7 +273,7 @@ ISR(PCINT1_vect){
 					adr++;
 					eeprom_write_byte(adr,valor_pot4);
 					adr=0;
-					writetxtUART("Se guardo la posicion 4\n");
+					//writetxtUART("Se guardo la posicion 4\n");
 					break;
 				sei();
 			posicion=0;
@@ -252,7 +291,7 @@ ISR(PCINT1_vect){
 					adr++;
 					valor_pot4_esc=eeprom_read_byte(adr);
 					adr=0;
-					writetxtUART("Mostrando la posicion 1\n");
+					//writetxtUART("Mostrando la posicion 1\n");
 					break;
 				case 2:
 					for (int i=0;i<5;i++){
@@ -266,7 +305,7 @@ ISR(PCINT1_vect){
 					adr++;
 					valor_pot4_esc=eeprom_read_byte(adr);
 					adr=0;
-					writetxtUART("Mostrando la posicion 2\n");
+					//writetxtUART("Mostrando la posicion 2\n");
 					break;
 				case 3:
 					for (int i=0;i<9;i++){
@@ -280,7 +319,7 @@ ISR(PCINT1_vect){
 					adr++;
 					valor_pot4_esc=eeprom_read_byte(adr);
 					adr=0;
-					writetxtUART("Mostrando la posicion 3\n");
+					//writetxtUART("Mostrando la posicion 3\n");
 					break;
 				case 4:
 					for (int i=0;i<13;i++){
@@ -294,10 +333,12 @@ ISR(PCINT1_vect){
 					adr++;
 					valor_pot4_esc=eeprom_read_byte(adr);
 					adr=0;
-					writetxtUART("Mostrando la posicion 4\n");
+					//writetxtUART("Mostrando la posicion 4\n");
 					break;
 			}
 			sei();
+			updateDC1(valor_pot1_esc,valor_pot2_esc);
+			updateDC0(valor_pot3_esc,valor_pot4_esc);
 			posicion=0;
 		}
 		//terminan if de modos	
