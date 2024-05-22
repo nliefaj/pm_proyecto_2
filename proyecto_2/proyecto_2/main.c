@@ -192,6 +192,7 @@ ISR(PCINT1_vect){
 					adr++;
 					eeprom_write_byte(adr,valor_pot4);
 					adr=0;
+					writetxtUART("Se guardo la posicion 1\n");
 					break;
 				case 2:
 					for (int i=0;i<5;i++){
@@ -205,6 +206,7 @@ ISR(PCINT1_vect){
 					adr++;
 					eeprom_write_byte(adr,valor_pot4);
 					adr=0;
+					writetxtUART("Se guardo la posicion 2\n");
 					break;
 				case 3:
 					for (int i=0;i<9;i++){
@@ -218,6 +220,7 @@ ISR(PCINT1_vect){
 					adr++;
 					eeprom_write_byte(adr,valor_pot4);
 					adr=0;
+					writetxtUART("Se guardo la posicion 3\n");
 					break;
 				case 4:
 					for (int i=0;i<13;i++){
@@ -231,6 +234,7 @@ ISR(PCINT1_vect){
 					adr++;
 					eeprom_write_byte(adr,valor_pot4);
 					adr=0;
+					writetxtUART("Se guardo la posicion 4\n");
 					break;
 				sei();
 			posicion=0;
@@ -248,6 +252,7 @@ ISR(PCINT1_vect){
 					adr++;
 					valor_pot4_esc=eeprom_read_byte(adr);
 					adr=0;
+					writetxtUART("Mostrando la posicion 1\n");
 					break;
 				case 2:
 					for (int i=0;i<5;i++){
@@ -261,7 +266,7 @@ ISR(PCINT1_vect){
 					adr++;
 					valor_pot4_esc=eeprom_read_byte(adr);
 					adr=0;
-					adr=0;
+					writetxtUART("Mostrando la posicion 2\n");
 					break;
 				case 3:
 					for (int i=0;i<9;i++){
@@ -275,7 +280,7 @@ ISR(PCINT1_vect){
 					adr++;
 					valor_pot4_esc=eeprom_read_byte(adr);
 					adr=0;
-					adr=0;
+					writetxtUART("Mostrando la posicion 3\n");
 					break;
 				case 4:
 					for (int i=0;i<13;i++){
@@ -289,6 +294,7 @@ ISR(PCINT1_vect){
 					adr++;
 					valor_pot4_esc=eeprom_read_byte(adr);
 					adr=0;
+					writetxtUART("Mostrando la posicion 4\n");
 					break;
 			}
 			sei();
