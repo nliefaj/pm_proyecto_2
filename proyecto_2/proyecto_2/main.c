@@ -25,6 +25,7 @@ uint8_t valor_pot2=0;
 uint8_t valor_pot3=0;
 uint8_t valor_pot4=0;
 uint8_t* adr=0;
+volatile char buffRX;
 uint8_t valor_pot1_esc=0;
 uint8_t valor_pot2_esc=0;
 uint8_t valor_pot3_esc=0;
@@ -78,7 +79,7 @@ void init_adc(void){
 	//DIDRO=0;
 }
 
-void initUART9600(void){
+/*void initUART9600(void){
 	//configurar pines tx y rx
 	DDRD &=~(1<<DDD0);//entrada
 	DDRD|=(1<<DDD1);//salida Tx
@@ -98,20 +99,27 @@ void initUART9600(void){
 	//baudrate = 207 con % de error igual a 0.16% con 9600
 	UBRR0=207;
 	
-}
+}*/
 
-void writetxtUART(char* texto){
+/*ISR(USART_RX_vect){
+	buffRX=UDR0;
+	while(!(UCSR0A&(1<<UDRE0)));//esperar hasta que el udre0 esté en 1
+	
+	
+}*/
+
+/*void writetxtUART(char* texto){
 	uint8_t i;
 	for (i=0;texto[i]!='\0';i++){
 		while(!(UCSR0A&(1<<UDRE0)));//esperar hasta que el udre0 esté en 1
 		UDR0=texto[i];//cuando i nulo se acaba
 	}
-}
+}*/
 
-uint8_t uart_receive(void){
+/*uint8_t uart_receive(void){
 	while(!(UCSR0A&(1<<RXC0)));
 	return UDR0;
-}
+}*/
 
 //MAIN LOOP
 
@@ -119,7 +127,7 @@ int main(void){
 	CLKPR=(1<<CLKPCE);
 	CLKPR=(1<<CLKPS0);
 	cli();
-	initUART9600();
+	//initUART9600();
 	initPWM0(0,1024);
 	initPWM1(0,1024);
 	//initPWM2(0,1024);
@@ -138,15 +146,6 @@ int main(void){
 			PORTD&=~(1<<PORTD4);
 			updateDC1(valor_pot1,valor_pot2);
 			updateDC0(valor_pot3,valor_pot4);
-			char mensaje[16];
-			snprintf(mensaje,sizeof(mensaje),"0 POT1:%d\n",valor_pot4);//potenciometro 1 en adafruit es el potenciometro 4 en codigo c
-			writetxtUART(mensaje);
-			snprintf(mensaje,sizeof(mensaje),"0 POT2:%d\n",valor_pot3);//potenciometro 2 en adafruit es el potenciometro 3 en codigo c
-			writetxtUART(mensaje);
-			snprintf(mensaje,sizeof(mensaje),"0 POT3:%d\n",valor_pot2);//potenciometro 3 en adafruit es el potenciometro 2 en codigo c
-			writetxtUART(mensaje);
-			snprintf(mensaje,sizeof(mensaje),"0 POT4:%d\n",valor_pot1);//potenciometro 4 en adafruit es el potenciometro 1 en codigo c
-			writetxtUART(mensaje);
 			_delay_ms(10);
 		}else if (modo==1){
 			//se guardan los valores de los pots a la eeprom (escribir)
@@ -159,31 +158,12 @@ int main(void){
 			_delay_ms(10);
 		}else if (modo==3){
 			//modo=2, aquí se conecta con adafruit
-			PORTD|=(1<<PORTD3)|(1<<PORTD4);
-			writetxtUART("3");
-			if (UCSR0A&(1<<RXC0)){
-				char mensaje_recibido[16];
-				int i=0;
-				while((mensaje_recibido[i++]=uart_receive())!='\n'){
-					if (i>=15) break;
-				}
-				mensaje_recibido[i]='\0';
-				if(strncmp(mensaje_recibido,"POT1:",5)){
-					pot1_adafruit=atoi(mensaje_recibido+5);
-				}else if(strncmp(mensaje_recibido,"POT2:",5)){
-					pot2_adafruit=atoi(mensaje_recibido+5);
-				}else if(strncmp(mensaje_recibido,"POT3:",5)){
-					pot3_adafruit=atoi(mensaje_recibido+5);
-				}else if(strncmp(mensaje_recibido,"POT4:",5)){
-					pot4_adafruit=atoi(mensaje_recibido+5);
-				}	
-			}
-			updateDC1(pot1_adafruit,pot2_adafruit);
-			updateDC0(pot3_adafruit,pot4_adafruit);
+			PORTD|=(1<<PORTD3)|(1<<PORTD4);	
 		}
+	}
 		
-    }
-}
+   }
+
 
 
 //INTERRUPCIONES
@@ -348,20 +328,20 @@ ISR(PCINT1_vect){
 
 ISR(ADC_vect){
 		switch_pot=(ADMUX&0x0F);
-		
+		//char mensaje[16];
 		if(switch_pot==7){
-			valor_pot1=ADCH;
-			ADMUX=((ADMUX&0xF0)|6);
+				valor_pot1=ADCH;
+				ADMUX=((ADMUX&0xF0)|6);
 			} else if(switch_pot==6){
-			valor_pot2=ADCH;
-			ADMUX=((ADMUX&0xF0)|5);
+				valor_pot2=ADCH;
+				ADMUX=((ADMUX&0xF0)|5);
 			}else if(switch_pot==5){
-			valor_pot3=ADCH;
-			ADMUX=((ADMUX&0xF0)|4);
+				valor_pot3=ADCH;
+				ADMUX=((ADMUX&0xF0)|4);
 			}else{
-			valor_pot4=ADCH;
-			ADMUX=((ADMUX&0xF0)|7);
-		}
+				valor_pot4=ADCH;
+				ADMUX=((ADMUX&0xF0)|7);
+			}
 		
 		ADCSRA|=(1<<ADIF);//apagar bandera
 }
