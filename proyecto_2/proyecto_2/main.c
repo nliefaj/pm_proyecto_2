@@ -30,10 +30,8 @@ uint8_t valor_pot1_esc=0;
 uint8_t valor_pot2_esc=0;
 uint8_t valor_pot3_esc=0;
 uint8_t valor_pot4_esc=0;
-uint8_t pot1_adafruit=0;
-uint8_t pot2_adafruit=0;
-uint8_t pot3_adafruit=0;
-uint8_t pot4_adafruit=0;
+
+uint8_t valor_buff=0;
 
 //int servos[4];
 //int servos_mem[4];
@@ -79,7 +77,7 @@ void init_adc(void){
 	//DIDRO=0;
 }
 
-/*void initUART9600(void){
+void initUART9600(void){
 	//configurar pines tx y rx
 	DDRD &=~(1<<DDD0);//entrada
 	DDRD|=(1<<DDD1);//salida Tx
@@ -99,27 +97,22 @@ void init_adc(void){
 	//baudrate = 207 con % de error igual a 0.16% con 9600
 	UBRR0=207;
 	
-}*/
+}
 
-/*ISR(USART_RX_vect){
+ISR(USART_RX_vect){
 	buffRX=UDR0;
 	while(!(UCSR0A&(1<<UDRE0)));//esperar hasta que el udre0 esté en 1
-	
-	
-}*/
-
-/*void writetxtUART(char* texto){
-	uint8_t i;
-	for (i=0;texto[i]!='\0';i++){
-		while(!(UCSR0A&(1<<UDRE0)));//esperar hasta que el udre0 esté en 1
-		UDR0=texto[i];//cuando i nulo se acaba
+	valor_buff=buffRX;
+	if (valor_buff==48){
+		modo++;
+		if (modo>=4){
+			modo=0;
+		}
 	}
-}*/
+	
+	
+}
 
-/*uint8_t uart_receive(void){
-	while(!(UCSR0A&(1<<RXC0)));
-	return UDR0;
-}*/
 
 //MAIN LOOP
 
@@ -127,7 +120,7 @@ int main(void){
 	CLKPR=(1<<CLKPCE);
 	CLKPR=(1<<CLKPS0);
 	cli();
-	//initUART9600();
+	initUART9600();
 	initPWM0(0,1024);
 	initPWM1(0,1024);
 	//initPWM2(0,1024);
